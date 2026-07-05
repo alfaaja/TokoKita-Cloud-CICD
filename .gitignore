@@ -1,0 +1,7 @@
+logs/*
+!logs/.gitkeep
+.env
+.DS_Store
+node_modules/
+vendor/
+InstruksiCodex.md
