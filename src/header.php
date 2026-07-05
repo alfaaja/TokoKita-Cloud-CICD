@@ -1,6 +1,6 @@
 <?php
 if (!isset($page_title)) {
-    $page_title = "TokoKita Cloud CI/CD";
+    $page_title = "TokoKita";
 }
 
 $current_path = parse_url($_SERVER["REQUEST_URI"] ?? "/", PHP_URL_PATH) ?: "/";
@@ -9,7 +9,7 @@ $nav_items = [
     [ "href" => "/", "label" => "Home" ],
     [ "href" => "/products.php", "label" => "Produk" ],
     [ "href" => "/promo.php", "label" => "Promo" ],
-    [ "href" => "/info.php", "label" => "Info" ],
+    [ "href" => "/info.php", "label" => "Tentang" ],
     [ "href" => "/cart.php", "label" => "Keranjang" ],
     [ "href" => "/login.php", "label" => "Masuk" ],
 ];
@@ -19,8 +19,8 @@ $nav_items = [
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="TokoKita Cloud CI/CD adalah toko online sederhana untuk praktik Docker, Docker Compose, automated testing, dan GitHub Actions.">
-  <title><?= htmlspecialchars($page_title) ?> - TokoKita Cloud CI/CD</title>
+  <meta name="description" content="TokoKita adalah toko online sederhana untuk kebutuhan kerja, setup meja, dan barang favorit harian.">
+  <title><?= htmlspecialchars($page_title) ?> - TokoKita</title>
   <link rel="stylesheet" href="/style.css">
 </head>
 <body class="page-<?= htmlspecialchars($page_slug) ?>">
@@ -42,8 +42,8 @@ $nav_items = [
       <a class="brand" href="/">
         <span class="brand-mark">TK</span>
           <span class="brand-copy">
-          <strong>TokoKita Cloud CI/CD</strong>
-          <small>Demo Docker, Compose, dan GitHub Actions</small>
+          <strong>TokoKita</strong>
+          <small>Kebutuhan kerja, ngopi, dan daily setup</small>
         </span>
       </a>
 

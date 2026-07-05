@@ -18,5 +18,4 @@ curl -fsS "$BASE_URL/promo.php" > /dev/null
 echo "[TEST] Mengecek halaman info CI/CD..."
 curl -fsS "$BASE_URL/info.php" > /dev/null
 
-
 echo "[SUCCESS] Semua endpoint utama berhasil diakses."

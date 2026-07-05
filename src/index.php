@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . "/data.php";
-$page_title = "TokoKita Cloud CI/CD";
+$page_title = "Home";
 $total_products = count($products);
 $total_categories = count(array_unique(array_column($products, "category")));
 $featured_products = array_slice($products, 0, 3, true);
@@ -15,25 +15,25 @@ include __DIR__ . "/header.php";
           <span class="hero-badge">Kurasi Mingguan</span>
           <span class="hero-badge">Pilihan Pelanggan</span>
         </div>
-        <p class="eyebrow">Demo Cloud Computing</p>
-        <h1>TokoKita Cloud CI/CD</h1>
-        <p class="lead">Aplikasi toko sederhana untuk membuktikan alur Docker image, Docker Compose, automated test, dan pipeline GitHub Actions berjalan dari kode sampai container.</p>
+        <p class="eyebrow">Kebutuhan kerja, ngopi, dan daily setup</p>
+        <h1>Belanja barang favorit yang bikin meja kerja terasa lebih hidup.</h1>
+        <p class="lead">TokoKita merangkum produk praktis untuk teman kerja harian, sudut ngopi, dan setup ringan yang nyaman dipakai dari pagi sampai malam.</p>
         <div class="hero-actions">
           <a class="btn primary" href="/products.php">Lihat Produk</a>
-          <a class="btn ghost" href="/info.php">Info CI/CD</a>
+          <a class="btn ghost" href="/promo.php">Promo Hari Ini</a>
         </div>
         <div class="hero-metrics-inline">
           <div>
             <strong><?= htmlspecialchars((string) $total_products) ?></strong>
-          <span>produk demo</span>
+          <span>produk pilihan</span>
           </div>
           <div>
             <strong><?= htmlspecialchars((string) $total_categories) ?></strong>
-          <span>kategori toko</span>
+          <span>kategori favorit</span>
           </div>
           <div>
             <strong>4.9</strong>
-          <span>endpoint utama</span>
+          <span>rating pelanggan</span>
           </div>
         </div>
       </div>
@@ -79,26 +79,26 @@ include __DIR__ . "/header.php";
   <section class="wrap section">
     <div class="section-head">
       <div>
-        <p class="eyebrow">Kenapa Aplikasi Ini Dipakai</p>
-        <h2>Sederhana, mudah dites, dan cukup untuk praktik CI/CD</h2>
+        <p class="eyebrow">Kenapa Belanja di Sini</p>
+        <h2>Tampilan rapi, pilihan sederhana, dan checkout terasa ringan</h2>
       </div>
     </div>
 
     <div class="feature-grid">
       <article class="feature-card">
         <span class="feature-icon">01</span>
-        <h3>Endpoint jelas</h3>
-        <p>Homepage, katalog produk, detail produk, promo, dan halaman info bisa dicek dengan browser maupun curl.</p>
+        <h3>Kurasi yang nggak bikin bingung</h3>
+        <p>Produk dipilih secukupnya supaya kamu cepat menemukan barang yang relevan tanpa harus scroll terlalu jauh.</p>
       </article>
       <article class="feature-card">
         <span class="feature-icon">02</span>
-        <h3>Siap container</h3>
-        <p>Source PHP ditempatkan di image Apache sehingga aplikasi bisa dijalankan konsisten di lokal dan GitHub Actions.</p>
+        <h3>Cocok untuk meja kerja modern</h3>
+        <p>Mulai dari minuman, aksesoris, sampai item kecil penunjang aktivitas harian semuanya dikemas dengan gaya yang konsisten.</p>
       </article>
       <article class="feature-card">
         <span class="feature-icon">03</span>
-        <h3>Mudah dipresentasikan</h3>
-        <p>Alurnya ringkas: build image, jalankan service, test endpoint, lalu lihat pipeline berhasil atau gagal.</p>
+        <h3>Siap checkout kapan saja</h3>
+        <p>Alur belanja dibuat ringkas supaya pelanggan bisa langsung pindah dari lihat produk ke promo lalu masuk keranjang tanpa hambatan.</p>
       </article>
     </div>
   </section>
@@ -135,26 +135,26 @@ include __DIR__ . "/header.php";
   <section class="wrap section">
     <div class="section-head">
       <div>
-        <p class="eyebrow">Alur Praktikum</p>
-        <h2>Yang dibuktikan dari repository ini</h2>
+        <p class="eyebrow">Pilihan Sesuai Mood</p>
+        <h2>Belanja sesuai suasana kerjamu hari ini</h2>
       </div>
     </div>
 
     <div class="command-grid">
       <article class="command-card">
         <span class="chip">Work Setup</span>
-        <h3>Docker build</h3>
-        <p>Dockerfile membungkus aplikasi PHP ke image bernama tokokita-cloud-cicd agar siap dijalankan sebagai container.</p>
+        <h3>Untuk meja kerja yang lebih rapi</h3>
+        <p>Pilih keyboard, mouse, dan notebook yang bikin ritme kerja lebih nyaman dari awal sampai akhir hari.</p>
       </article>
       <article class="command-card">
         <span class="chip">Coffee Break</span>
-        <h3>Docker Compose</h3>
-        <p>Compose menjalankan service web di port 8080 dan memasang folder logs lokal ke log Apache container.</p>
+        <h3>Teman ngopi yang tetap produktif</h3>
+        <p>Kopi susu literan, hoodie nyaman, dan aksesoris sederhana yang pas untuk jeda santai tanpa mengganggu fokus.</p>
       </article>
       <article class="command-card">
         <span class="chip">Gift Ideas</span>
-        <h3>CI/CD</h3>
-        <p>GitHub Actions membangun image, menyalakan container, menjalankan test curl, lalu mematikan service otomatis.</p>
+        <h3>Hadiah kecil buat teman satu tim</h3>
+        <p>Barang-barang simpel dengan harga ringan yang enak dijadikan kejutan untuk rekan kerja atau partner proyek.</p>
       </article>
     </div>
   </section>
