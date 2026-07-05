@@ -1,0 +1,12 @@
+services:
+  web:
+    build: .
+    image: tokokita-cloud-cicd:v1
+    container_name: tokokita-cloud-cicd
+    ports:
+      - "8080:80"
+    volumes:
+      - ./logs:/var/log/apache2
+    environment:
+      TZ: Asia/Jakarta
+    restart: unless-stopped
