@@ -1,0 +1,41 @@
+name: CI Pipeline TokoKita Cloud
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-and-build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -t tokokita-cloud-cicd:latest .
+
+      - name: Start application with Docker Compose
+        run: docker compose up -d
+
+      - name: Wait for application
+        run: sleep 10
+
+      - name: Run automated test
+        run: |
+          chmod +x tests/test_app.sh
+          ./tests/test_app.sh
+
+      - name: Show running containers
+        if: always()
+        run: docker ps -a
+
+      - name: Show application logs
+        if: always()
+        run: docker compose logs || true
+
+      - name: Stop containers
+        if: always()
+        run: docker compose down
