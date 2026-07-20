@@ -1,41 +1,46 @@
-name: CI Pipeline TokoKita Cloud
+name: CI TokoKita UAS Cloud
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   test-and-build:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
 
+      - name: Validate Docker Compose configuration
+        run: docker compose --env-file .env.example config -q
+
       - name: Build Docker image
-        run: docker build -t tokokita-cloud-cicd:latest .
+        run: docker build -t tokokita-cloud-cicd:v1 .
 
-      - name: Start application with Docker Compose
-        run: docker compose up -d
+      - name: Start web and database services
+        run: docker compose --env-file .env.example up -d --build
 
-      - name: Wait for application
-        run: sleep 10
-
-      - name: Run automated test
+      - name: Wait for application health check
         run: |
-          chmod +x tests/test_app.sh
-          ./tests/test_app.sh
+          for attempt in {1..30}; do
+            if curl -fsS http://localhost:8080/health.php; then exit 0; fi
+            sleep 2
+          done
+          exit 1
 
-      - name: Show running containers
-        if: always()
-        run: docker ps -a
+      - name: Run automated tests
+        run: chmod +x tests/test_app.sh && ./tests/test_app.sh
 
-      - name: Show application logs
+      - name: Show Docker Compose status
         if: always()
-        run: docker compose logs || true
+        run: docker compose --env-file .env.example ps
+
+      - name: Show service logs on failure
+        if: failure()
+        run: docker compose --env-file .env.example logs --no-color
 
       - name: Stop containers
         if: always()
-        run: docker compose down
+        run: docker compose --env-file .env.example down

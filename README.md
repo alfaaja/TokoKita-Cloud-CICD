@@ -1,154 +1,71 @@
-# TokoKita Cloud CI/CD
+# TokoKita Cloud CI/CD — UAS Cloud Computing
 
-TokoKita Cloud CI/CD adalah aplikasi web toko sederhana yang digunakan untuk mempraktikkan Docker, Docker Compose, automated testing, dan CI/CD GitHub Actions.
+TokoKita adalah aplikasi toko PHP sederhana yang mendemonstrasikan arsitektur multi-container: aplikasi PHP 8.2/Apache membaca dan mengelola produk di MySQL 8. Proyek ini tidak memakai layanan cloud berbayar atau Kubernetes.
 
-Fokus project ini bukan membuat fitur toko yang kompleks, tetapi membuktikan aplikasi sederhana bisa dibuild menjadi Docker image, dijalankan sebagai container, dites otomatis, dan diproses oleh pipeline CI/CD.
-
-## Tujuan Praktikum
-
-- Membangun Docker image dari source code aplikasi.
-- Menjalankan aplikasi di dalam container.
-- Mengelola service web dengan Docker Compose.
-- Menjalankan automated test berbasis Bash dan curl.
-- Menjalankan pipeline GitHub Actions pada setiap push atau pull request ke branch `main`.
-- Membuktikan pipeline bisa gagal secara terkontrol dan berhasil lagi setelah test diperbaiki.
-
-## Teknologi
-
-- PHP
-- Apache
-- Docker
-- Docker Compose
-- Bash
-- curl
-- GitHub Actions
-
-## Struktur Folder
+## Arsitektur
 
 ```text
-.
-├── src/
-│   ├── index.php
-│   ├── products.php
-│   ├── product.php
-│   ├── promo.php
-│   ├── info.php
-│   └── ...
-├── tests/
-│   └── test_app.sh
-├── logs/
-│   └── .gitkeep
-├── docs/
-│   ├── checklist_laporan.md
-│   ├── panduan_presentasi.md
-│   ├── struktur_laporan.md
-│   └── alur_demo_video.md
-├── .github/
-│   └── workflows/
-│       └── ci.yml
-├── Dockerfile
-├── docker-compose.yml
-├── .gitignore
-└── README.md
+Browser → web (PHP 8.2 + Apache, port 8080) → db (MySQL 8)
+                                               └→ named volume persisten
 ```
 
-## Cara Menjalankan Lokal
+Kedua service berada pada jaringan Docker `tokokita_net`. `web` hanya dimulai setelah health check `db` sukses.
 
-Build Docker image:
+## Fitur
+
+- Katalog, detail produk, keranjang, dan beranda memakai data MySQL.
+- Seller Center untuk create, update, dan delete produk.
+- Validasi nama, kategori, deskripsi, harga, dan stok.
+- API JSON: `GET|POST /api/products.php`, `GET|PUT|DELETE /api/products.php?id=ID`.
+- Health endpoint: `GET /health.php` (200 bila aplikasi dan database siap; 503 bila database tidak tersedia).
+- Named volume `tokokita_db_data`, database health check, restart policy, dan automated test Bash.
+
+## Konfigurasi environment
+
+Salin contoh konfigurasi lokal lalu sesuaikan hanya bila perlu:
+
+```bash
+cp .env.example .env
+```
+
+| Variable | Keterangan |
+| --- | --- |
+| `MYSQL_DATABASE`, `MYSQL_USER`, `MYSQL_PASSWORD`, `MYSQL_ROOT_PASSWORD` | Inisialisasi MySQL |
+| `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD` | Koneksi PHP ke MySQL |
+
+`.env` diabaikan Git. Jangan unggah credential asli; nilai di `.env.example` hanya nilai lokal contoh.
+
+## Menjalankan aplikasi
 
 ```bash
 docker build -t tokokita-cloud-cicd:v1 .
-```
-
-Jalankan aplikasi dengan Docker Compose:
-
-```bash
 docker compose up -d
-```
-
-Cek container:
-
-```bash
 docker compose ps
+curl -i http://localhost:8080/health.php
 ```
 
-Akses aplikasi:
+Buka `http://localhost:8080`, katalog di `/products.php`, dan Seller Center di `/admin.php`. Runtime dependency berasal dari image PHP dan ekstensi PDO/MySQL yang dipasang oleh Dockerfile; proyek ini tidak membutuhkan Composer.
 
-```bash
-curl http://localhost:8080
-```
-
-Jalankan automated test:
+## Automated test
 
 ```bash
 chmod +x tests/test_app.sh
 ./tests/test_app.sh
 ```
 
-Matikan service:
+Test memeriksa health check, membaca katalog API, menolak data invalid, membuat produk, mengubahnya, menghapusnya, serta smoke test halaman toko. Data test selalu dibersihkan.
 
-```bash
-docker compose down
-```
+## Membuktikan persistence dan recovery
 
-## Cara Automated Test Bekerja
+1. Tambahkan produk melalui Seller Center dan catat namanya.
+2. Jalankan `docker compose down` (tanpa `-v`), lalu `docker compose up -d`.
+3. Cari produk tersebut kembali di katalog: data tetap ada karena named volume.
+4. Uji web recovery dengan `docker compose stop web`, `docker compose start web`, lalu `docker compose ps` dan curl health endpoint.
 
-File `tests/test_app.sh` memakai Bash, `set -e`, dan `curl -fsS`.
+Jangan memakai `docker compose down -v` saat membuktikan persistence karena perintah itu menghapus volume database.
 
-Default target test:
+## GitHub Actions
 
-```bash
-BASE_URL="${BASE_URL:-http://localhost:8080}"
-```
+Workflow `.github/workflows/ci.yml` memvalidasi Compose menggunakan `.env.example`, build image, menjalankan `web` dan `db`, menunggu `/health.php`, menjalankan test, menampilkan status/log saat gagal, dan selalu membersihkan container dengan `docker compose down`.
 
-Endpoint yang dicek:
-
-- `/`
-- `/products.php`
-- `/product.php?id=1`
-- `/promo.php`
-- `/info.php`
-
-Jika salah satu endpoint gagal diakses, script akan berhenti dengan exit code non-zero. Kondisi ini membuat pipeline GitHub Actions gagal.
-
-## Cara GitHub Actions Bekerja
-
-Workflow ada di `.github/workflows/ci.yml`.
-
-Pipeline berjalan saat:
-
-- push ke branch `main`
-- pull request ke branch `main`
-
-Urutan pipeline:
-
-1. Checkout source code.
-2. Build Docker image.
-3. Jalankan aplikasi dengan Docker Compose.
-4. Tunggu aplikasi siap.
-5. Jalankan automated test.
-6. Tampilkan daftar container.
-7. Tampilkan log aplikasi.
-8. Matikan container dengan `docker compose down`.
-
-## Simulasi Pipeline Gagal
-
-Edit `tests/test_app.sh`, lalu tambahkan endpoint palsu:
-
-```bash
-curl -fsS "$BASE_URL/halaman-tidak-ada.php" > /dev/null
-```
-
-Commit dan push perubahan tersebut. GitHub Actions akan gagal karena endpoint tidak ada.
-
-## Memperbaiki Pipeline
-
-Hapus baris endpoint palsu dari `tests/test_app.sh`, lalu commit dan push ulang. Pipeline akan kembali berhasil karena semua endpoint valid bisa diakses.
-
-## Hubungan Docker, Docker Compose, dan CI/CD
-
-Docker membungkus aplikasi menjadi image dan container agar runtime PHP Apache konsisten.
-
-Docker Compose mengelola service secara deklaratif, termasuk build image, nama container, port, timezone, restart policy, dan volume log.
-
-CI/CD mengotomatisasi proses build dan test setiap ada perubahan kode, sehingga error bisa terdeteksi sebelum aplikasi dianggap siap.
+Riwayat Git sudah memiliki simulasi gagal (`2f27a38`) dan perbaikannya (`88df66f`). Setelah perubahan UAS ini di-commit dan pengguna memilih untuk push, lihat tab **Actions** untuk menyimpan bukti run dua-container yang gagal/berhasil; repository lokal sengaja tidak melakukan push otomatis.

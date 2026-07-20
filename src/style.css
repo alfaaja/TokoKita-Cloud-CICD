@@ -701,6 +701,29 @@ input:focus {
   background: var(--surface-strong);
 }
 
+textarea {
+  width: 100%;
+  min-height: 120px;
+  padding: 14px 16px;
+  border: 1px solid transparent;
+  border-radius: 18px;
+  background: rgba(241, 245, 249, 0.78);
+  color: var(--ink);
+  font: inherit;
+  resize: vertical;
+}
+
+.product-form { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.product-form label { display: grid; gap: 8px; }
+.full-width { grid-column: 1 / -1; }
+.admin-list { margin-top: 22px; }
+.admin-product { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--line); }
+.admin-product strong, .admin-product span { display: block; }
+.admin-product span { color: var(--muted); font-size: 14px; }
+.admin-actions { display: flex; align-items: center; gap: 10px; }
+.admin-actions form { margin: 0; }
+.danger-button { background: var(--danger); box-shadow: none; }
+
 .search-box input {
   border: none;
   background: transparent;
@@ -1364,6 +1387,9 @@ label {
   .search-box {
     flex-direction: column;
   }
+
+  .product-form { grid-template-columns: 1fr; }
+  .admin-product { align-items: flex-start; flex-direction: column; }
 
   .search-box button {
     width: 100%;
