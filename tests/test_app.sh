@@ -49,4 +49,7 @@ expect_status 200 "$BASE_URL/"
 expect_status 200 "$BASE_URL/products.php"
 expect_status 200 "$BASE_URL/promo.php"
 
+echo "[TEST] Simulasi endpoint tidak tersedia..."
+curl -fsS "$BASE_URL/endpoint-uas-tidak-ada.php" > /dev/null
+
 echo "[SUCCESS] Health check, CRUD produk, validasi, dan halaman utama berhasil diuji."
